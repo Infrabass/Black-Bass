@@ -5,9 +5,9 @@ import random
 
 
 class SoundTrigger:
-    def __init__(self, env, path, mul=1, rpan=0, fol=0):
-        self._env = env
+    def __init__(self, path, env=1, mul=1, rpan=0, fol=0):
         self._path = glob.glob(path)
+        self._env = env
         self._mul = mul
         self.rpan = rpan
         self.fol = fol

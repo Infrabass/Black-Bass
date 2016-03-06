@@ -1,5 +1,6 @@
 
 vars = {}
+vars['Server'] = None
 vars['Midi'] = None
 
 # Enregistre une reference dans le dictionnaire.

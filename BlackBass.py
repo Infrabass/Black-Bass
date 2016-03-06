@@ -3,12 +3,12 @@ from pyo import *
 import Resources.variables as vars
 import Resources.preferences as pref
 from Resources.midi_routing import Midi
-from Resources.audio_class import Freeze, Granul
+from Resources.audio_class import Freeze, Granul, LorenzChaotic, RosslerChaotic
 from Resources.misc_class import Inputs
 from Resources.trigger_class import SoundTrigger
 
 ###Context###
-context = 'fac'
+context = 'maison'
 
 if context == 'maison':
     pref.inputSysMic = 2
@@ -26,6 +26,8 @@ s.setInOutDevice(pref.output)
 s.boot()
 s.start()
 
+vars.set('Server', s)
+
 print pref.names[pref.position]
 print 'Channels:', pref.output_ch
 print 'Midi IN:', pref.midiIN
@@ -41,8 +43,8 @@ connect = CallAfter(pref.Connect, time=1)
 mid = Midi()
 
 ###Start###
-inpPiez = Inputs(mid.sel4, pref.input_pyo9)
-inpMic = Inputs(mid.sel4, pref.input_pyo10) 
+inpPiez = Inputs(mid.t_0003, pref.input_pyo9)
+inpMic = Inputs(mid.t_0003, pref.input_pyo10) 
 inpMicLive = Input(pref.input_pyo1)
 
 ###PART I###
@@ -52,7 +54,7 @@ fol1 = Follower2(inpPiez.getOut(), risetime=0.001).stop()*4
 envfol1 = Clip(fol1*2).stop()
 
 
-trig_intro = SoundTrigger(env=envfol1, path='Audiofiles/Misc/BlackBass_IntroBlast.wav', mul=1, rpan=0, fol=0)
+trig_intro = SoundTrigger('Audiofiles/Misc/BlackBass_IntroBlast.wav')
 
 def Intro():
     trig_intro.Play()
@@ -61,7 +63,7 @@ def Intro():
 t_intro = TrigFunc(attd, Intro)
 
 ##Freeze##
-frez = Freeze(mid.sel1, inpMicLive)
+frez = Freeze(mid.t_0001, inpMicLive)
 #gra = [Granul(frez.getOut()).out() for i in range(2)]
 gra1 = Granul(frez.getOut()).out(0)
 gra2 = Granul(frez.getOut()).out(2)
@@ -69,7 +71,7 @@ gra3 = Granul(frez.getOut()).out(4)
 gra4 = Granul(frez.getOut()).out(6)
 
 ###PART II###
-trig_part2 = SoundTrigger(env=envfol1, path='Audiofiles/Misc/BlackBass_Part2Blast.wav', mul=1, rpan=0, fol=0)
+trig_part2 = SoundTrigger('Audiofiles/Misc/BlackBass_Part2Blast.wav')
 
 
 def Part2():
@@ -86,16 +88,16 @@ def Part2():
     frez.tabRec.reset()
     print '### PART II ###'
 
-trigPart2 = TrigFunc(mid.sel2, Part2)
+trigPart2 = TrigFunc(mid.t_0005, Part2)
 
 
 ##Attack Detection##
-trig_clic = SoundTrigger(envfol1, 'Audiofiles/SampleSoft/*.wav', 1, 0, 0)
-trig_impact = SoundTrigger(envfol1, 'Audiofiles/SampleHard/*.wav', 1, 0, 0)
-trig_cb1 = SoundTrigger(envfol1, 'Audiofiles/SampleCB_1/*.wav', 1, 1, 1)
-trig_cb2 = SoundTrigger(envfol1, 'Audiofiles/SampleCB_2/*.wav', 1, 1, 1)
-trig_cb3 = SoundTrigger(envfol1, 'Audiofiles/SampleCB_3/*.wav', 1, 1, 1)
-trig_cb4 = SoundTrigger(envfol1, 'Audiofiles/SampleCB_4/*.wav', 1, 1, 1)
+trig_clic = SoundTrigger('Audiofiles/SampleSoft/*.wav')
+trig_impact = SoundTrigger('Audiofiles/SampleHard/*.wav')
+trig_cb1 = SoundTrigger('Audiofiles/SampleCB_1/*.wav', envfol1, 1, 1, 1)
+trig_cb2 = SoundTrigger('Audiofiles/SampleCB_2/*.wav', envfol1, 1, 1, 1)
+trig_cb3 = SoundTrigger('Audiofiles/SampleCB_3/*.wav', envfol1, 1, 1, 1)
+trig_cb4 = SoundTrigger('Audiofiles/SampleCB_4/*.wav', envfol1, 1, 1, 1)
 
 
 def play():
@@ -124,7 +126,7 @@ def cb_4():
         trig_cb4.Pick()
 
 #Grain
-trig_grain = SoundTrigger(env=envfol1, path='Audiofiles/Misc/BlackBass_Grain_AccuDispers_4.wav', mul=mid.cc1, rpan=0, fol=0)
+trig_grain = SoundTrigger('Audiofiles/Misc/BlackBass_Grain_AccuDispers_4.wav', mul=mid.cc1)
 count_grain = 0
 
 def GoGrain():
@@ -138,7 +140,7 @@ def GoGrain():
 
 fol2 = Follower2(inpPiez.getOut(), risetime=0.02, falltime=0.02, mul=6, add=0).stop()
 envfol2 = Clip(fol2 * 2.75).stop()
-trig_bmath = SoundTrigger(env=envfol1, path='Audiofiles/Misc/BlackMath_Follower2.wav', mul=mid.cc1, rpan=0, fol=1)
+trig_bmath = SoundTrigger(path='Audiofiles/Misc/BlackMath_Follower2.wav', env=envfol1, mul=mid.cc1, rpan=0, fol=1)
 
 def blackMath():
     global envfol2, trig_bmath

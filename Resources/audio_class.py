@@ -81,7 +81,62 @@ class Granul:
         return self
         
 
-        
+
+
+class LorenzChaotic():
+    "Synth using chaotic modulation to overload a self-modulated oscillator."
+    def __init__(self, freq=100, pitch=0.002, chaos=0.8, amount=0.5, cutoff=20000, mul=1):
+        self.freq = freq
+        self._pitch = pitch
+        self._chaos = chaos
+        self.amount = amount
+        self._cutoff = cutoff
+        self._mul = mul
+        self.lrz = Lorenz(self._pitch, self._chaos, True, self.amount, 0.5)
+        self.lrz.ctrl()
+        self.sloop = SineLoop([self.freq*0.99,self.freq*1.01], feedback=self.lrz, mul=self._mul)
+        self.output = ButLP(self.sloop, self._cutoff)
+
+    def play(self):
+        self.output.play()
+
+    def stop(self):
+        self.output.stop()
+
+    def out(self, x=0):
+        self.output.out(x)
+        return self
+
+    def getOut(self):
+        return self.output
+
+
+class RosslerChaotic():
+    "Synth using chaotic modulation to overload a self-modulated oscillator."
+    def __init__(self, freq=100, pitch=0.002, chaos=0.8, amount=0.5, cutoff=20000, mul=1):
+        self.freq = freq
+        self._pitch = pitch
+        self._chaos = chaos
+        self.amount = amount
+        self._cutoff = cutoff
+        self._mul = mul
+        self.lrz = Rossler(self._pitch, self._chaos, True, self.amount, 0.5)
+        self.lrz.ctrl()
+        self.sloop = SineLoop([self.freq*0.99,self.freq*1.01], feedback=self.lrz, mul=self._mul)
+        self.output = ButLP(self.sloop, self._cutoff)
+
+    def play(self):
+        self.output.play()
+
+    def stop(self):
+        self.output.stop()
+
+    def out(self, x=0):
+        self.output.out(x)
+        return self
+
+    def getOut(self):
+        return self.output        
 
 
 
