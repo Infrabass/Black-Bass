@@ -1,12 +1,8 @@
 
-vars = {}
-vars['Server'] = None
-vars['Midi'] = None
+from pyo import*
 
-# Enregistre une reference dans le dictionnaire.
-def set(key, obj):
-    vars[key] = obj
-    
-# Recupere une reference dans le dictionnaire.
-def get(key):
-    return vars.get(key, None)
+
+gran1_mul = 0.4
+gran2_mul = 0.4
+gran3_mul = 0.4
+gran4_mul = 0.4

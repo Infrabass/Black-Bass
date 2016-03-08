@@ -30,7 +30,7 @@ class SoundTrigger:
 
     def Pick(self):
         if self.rpan == 1:
-            self.rPan.pan = random.uniform(0,1)
+            self.pan.pan = random.uniform(0,1)
         self.pick = random.randint(0,self.nbSnd-1)
         self.durPick = self.tab[self.pick].getDur()
         self.trigTab.setTable(self.tab[self.pick])

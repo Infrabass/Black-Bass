@@ -21,7 +21,6 @@ position = names.index("JackRouter")
 output = indexes[position]
 
 
-
 ###Connection###
 app = 'Live'
 

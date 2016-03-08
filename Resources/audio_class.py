@@ -1,6 +1,5 @@
 
 from pyo import *
-import Resources.variables as vars
 
 class Freeze:
     def __init__(self, trig, input, size=1.5, channel=1):
@@ -14,8 +13,9 @@ class Freeze:
         self.count = 0
 
         #Wait rec time before new rec
-        self.mdel = SDelay(Sig(0), delay = self.size)
-        self.next = NextTrig(self._trig, self.mdel + Trig().play())
+        self.ftrig = Trig().play()
+        self.mdel = SDelay(Sig(0), delay = self.size, maxdelay = 1.5)
+        self.next = NextTrig(self._trig, self.mdel + self.ftrig )
         self.mdel.input = self.next
         
         #Table Rec
@@ -33,7 +33,7 @@ class Freeze:
         self.interp = Fader(fadein=self.fad, fadeout=self.fad, dur=0, mul=1, add=0).stop()
         self.morphle = TableMorph(self.interp, self.tabResult, self.tabsAlt).stop()
         
-        self.trig = TrigFunc(self.next,self.rec)
+        self.trig = TrigFunc(self._trig,self.rec)
         
 
     def rec(self):
@@ -65,8 +65,9 @@ class Freeze:
 
 
 class Granul:
-    def __init__(self, input):
+    def __init__(self, input, mul=0.4):
         self._input = input
+        self._mul = mul
         self.dens = Sig(Randi(40, 70, 0.11).play())
         self.pitch = Sig(Randi(0.995, 1.005, 0.23).play())
         self.pos = Sig(Randi(0.1, 0.6, 0.5).play(), mul=self._input.getSize()/2)
@@ -74,8 +75,11 @@ class Granul:
         self.dev = Sig(Randi(0.05, 0.35, 0.35).play())
         self.pan = Sig(Randi(0, 1, 0.23).play())
         
-        self.gran = Particle(self._input, HannTable(), dens=self.dens, pitch=self.pitch+Noise(0.01), pos=self.pos+Noise(1), dur=self.dur, dev=self.dev, pan=self.pan+Noise(0.480), chnls=2, mul=0.4, add=0)
+        self.gran = Particle(self._input, HannTable(), dens=self.dens, pitch=self.pitch+Noise(0.01), pos=self.pos+Noise(1), dur=self.dur, dev=self.dev, pan=self.pan+Noise(0.480), chnls=2, mul=self._mul, add=0)
         
+    def stop(self):
+        self.gran.stop()
+
     def out(self, x=0):
         self.gran.out(x)
         return self
@@ -85,16 +89,16 @@ class Granul:
 
 class LorenzChaotic():
     "Synth using chaotic modulation to overload a self-modulated oscillator."
-    def __init__(self, freq=100, pitch=0.002, chaos=0.8, amount=0.5, cutoff=20000, mul=1):
-        self.freq = freq
+    def __init__(self, freq=0.1, pitch=0.03, chaos=0.8, cutoff=14000, mul=1):
+        self._freq = freq
         self._pitch = pitch
         self._chaos = chaos
-        self.amount = amount
         self._cutoff = cutoff
         self._mul = mul
+        self.amount = Randi(min=0.5, max=2.00, freq=0.50)
         self.lrz = Lorenz(self._pitch, self._chaos, True, self.amount, 0.5)
-        self.lrz.ctrl()
-        self.sloop = SineLoop([self.freq*0.99,self.freq*1.01], feedback=self.lrz, mul=self._mul)
+#        self.lrz.ctrl()
+        self.sloop = SineLoop([self._freq*0.99,self._freq*1.01], feedback=self.lrz, mul=self._mul)
         self.output = ButLP(self.sloop, self._cutoff)
 
     def play(self):
@@ -112,17 +116,16 @@ class LorenzChaotic():
 
 
 class RosslerChaotic():
-    "Synth using chaotic modulation to overload a self-modulated oscillator."
-    def __init__(self, freq=100, pitch=0.002, chaos=0.8, amount=0.5, cutoff=20000, mul=1):
-        self.freq = freq
+    def __init__(self, freq=0.1, pitch=0.03, chaos=0.8, cutoff=14000, mul=1):
+        self._freq = freq
         self._pitch = pitch
         self._chaos = chaos
-        self.amount = amount
         self._cutoff = cutoff
         self._mul = mul
+        self.amount = Randi(min=0.5, max=2.00, freq=0.50)
         self.lrz = Rossler(self._pitch, self._chaos, True, self.amount, 0.5)
-        self.lrz.ctrl()
-        self.sloop = SineLoop([self.freq*0.99,self.freq*1.01], feedback=self.lrz, mul=self._mul)
+#        self.lrz.ctrl()
+        self.sloop = SineLoop([self._freq*0.99,self._freq*1.01], feedback=self.lrz, mul=self._mul)
         self.output = ButLP(self.sloop, self._cutoff)
 
     def play(self):
@@ -136,7 +139,7 @@ class RosslerChaotic():
         return self
 
     def getOut(self):
-        return self.output        
+        return self.output       
 
 
 
