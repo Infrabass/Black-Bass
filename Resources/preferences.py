@@ -5,6 +5,7 @@ import os
 
 ###Soundcard Settings###
 output_ch = 10
+buffer = 512
 midiIN = 99
 midiOUT = 99
 inputSysPiez = 1

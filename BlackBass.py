@@ -19,7 +19,7 @@ elif context == 'fac':
     
 
 ###Server###
-s = Server(sr=48000, nchnls=pref.output_ch, buffersize=256, duplex=1)
+s = Server(sr=48000, nchnls=pref.output_ch, buffersize=pref.buffer, duplex=1)
 s.setMidiInputDevice(pref.midiIN)
 s.setMidiOutputDevice(pref.midiOUT)
 s.setInOutDevice(pref.output)
@@ -118,20 +118,22 @@ def play():
 def cb_1():
     if random.randint(0,100) < 75:
         trig_cb1.Pick()
+        print 'cb1'
 
 def cb_2():
     if trig_lay_2 == 1 and random.randint(0,100) < 75:
         trig_cb2.Pick()
-        
+         print 'cb2'
 
 def cb_3():
     if trig_lay_3 == 1 and random.randint(0,100) < 75:
         trig_cb3.Pick()
-        
+         print 'cb3'
 
 def cb_4():
     if trig_lay_4 == 1 and random.randint(0,100) < 75:
         trig_cb4.Pick()
+         print 'cb4'
 
 #Grain
 trig_grain = SoundTrigger('Audiofiles/Misc/BlackBass_Grain_AccuDispers_4.wav', mul=mid.cc1)
@@ -147,7 +149,7 @@ def GoGrain():
 
 
 fol2 = Follower2(inpPiez.getOut(), risetime=0.02, falltime=0.02, mul=6, add=0).stop()
-envfol2 = Clip(fol2 * 2.75).stop()
+envfol2 = Clip(fol2*2.75).stop()
 trig_bmath = SoundTrigger(path='Audiofiles/Misc/BlackMath_Follower2.wav', env=envfol1, mul=mid.cc1, rpan=0, fol=1)
 
 def blackMath():

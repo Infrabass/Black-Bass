@@ -46,8 +46,8 @@ class Midi:
         self.m_0905 = Notein(poly=1, scale=1, first=10, last=10, channel=2, mul=1, add=0)
         self.t_0905 = self.m_0905['trigon']
         #Vol Grain
-        self.cc1 = Midictl(ctlnumber = 22, minscale = 0, maxscale = 1, channel = 1)
-        self.cc1.setInterpolation(False)
+        self.m_09A = Midictl(ctlnumber = 22, minscale = 0, maxscale = 1, channel = 1)
+        self.m_09A.setInterpolation(False)
         self.hhcc3 = Midictl(ctlnumber = 2, minscale = 0, maxscale = 127, channel = 3)
         self.hhcc3.setInterpolation(False)
         self.pat = Pattern(self.send, time=0.05)
